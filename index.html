@@ -282,7 +282,7 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 
 /* ─── FLYER HERO ─── */
 .flyer-hero {
-  padding: 20px 40px 16px;
+  padding: 16px 40px 12px;
   border-bottom: 3px solid var(--honda-blue);
   display: flex;
   justify-content: space-between;
@@ -337,10 +337,10 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 
 /* ─── CUSTOMER / BUILT FOR YOU ─── */
 .flyer-built {
-  margin: 16px 40px 0;
+  margin: 12px 40px 0;
   background: var(--honda-blue-soft);
   border-radius: var(--r-md);
-  padding: 14px 22px;
+  padding: 12px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -394,7 +394,7 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 .flyer-compare {
   display: grid;
   grid-template-columns: 1fr 64px 1fr;
-  padding: 20px 40px 4px;
+  padding: 14px 40px 0;
   gap: 0;
   align-items: stretch;
 }
@@ -404,7 +404,7 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 20px 20px;
+  padding: 16px 20px;
   border-radius: var(--r-lg);
 }
 
@@ -485,8 +485,8 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 
 /* ─── INVENTORY CALLOUT ─── */
 .flyer-inventory {
-  margin: 18px 40px 0;
-  padding: 16px 26px;
+  margin: 14px 40px 0;
+  padding: 12px 26px;
   border: 1.5px solid var(--honda-blue);
   border-radius: var(--r-lg);
   text-align: center;
@@ -494,11 +494,18 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 
 .inventory-headline {
   font-family: var(--font-serif);
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 400;
   color: var(--black);
-  line-height: 1.35;
+  line-height: 1.3;
   letter-spacing: -.005em;
+}
+
+.inventory-sub {
+  font-size: 12px;
+  color: var(--mid);
+  margin-top: 6px;
+  line-height: 1.4;
 }
 
 .inventory-headline em {
@@ -506,16 +513,9 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
   color: var(--honda-blue);
 }
 
-.inventory-sub {
-  font-size: 12.5px;
-  color: var(--mid);
-  margin-top: 8px;
-  line-height: 1.5;
-}
-
 /* ─── DETAILS STRIP ─── */
 .flyer-details {
-  margin: 18px 40px 0;
+  margin: 14px 40px 0;
 }
 
 .details-grid {
@@ -550,11 +550,15 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 
 /* ─── EXPIRATION BANNER ─── */
 .flyer-expire {
-  margin: 18px 40px 0;
+  margin: 14px 40px 0;
   text-align: center;
-  padding: 16px 20px;
+  padding: 10px 20px;
   background: var(--surface);
   border-radius: var(--r-lg);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
 }
 
 .expire-label {
@@ -563,12 +567,11 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 6px;
 }
 
 .expire-date {
   font-family: var(--font-serif);
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 400;
   color: var(--honda-blue);
   letter-spacing: -.01em;
@@ -577,25 +580,25 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 
 /* ─── TIMELINE + QR ─── */
 .flyer-timeline {
-  margin: 18px 40px 0;
+  margin: 14px 40px 0;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr auto;
-  gap: 18px;
+  gap: 14px;
   align-items: center;
 }
 
 .timeline-step {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .timeline-num {
-  width: 26px; height: 26px;
+  width: 22px; height: 22px;
   border-radius: 50%;
   background: var(--honda-blue);
   color: white;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -603,36 +606,36 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 }
 
 .timeline-text {
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--black);
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
 .timeline-sub {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--muted);
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .timeline-qr {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   text-align: center;
 }
 
 .timeline-qr-box {
-  width: 84px;
-  height: 84px;
+  width: 70px;
+  height: 70px;
   background: var(--pure);
   border: 1.5px solid var(--border);
   border-radius: var(--r-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  padding: 5px;
 }
 
 .timeline-qr-box img, .timeline-qr-box canvas {
@@ -652,13 +655,13 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 
 /* ─── FINE PRINT ─── */
 .flyer-fine {
-  margin: 18px 40px 0;
+  margin: 14px 40px 0;
 }
 
 .fine-print {
-  font-size: 8.5px;
+  font-size: 8px;
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.45;
 }
 
 .fine-print .expire-note {
@@ -667,8 +670,8 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 
 /* ─── BOTTOM BAR ─── */
 .flyer-footer {
-  margin: 14px 40px 18px;
-  padding-top: 14px;
+  margin: 10px 40px 14px;
+  padding-top: 10px;
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -1114,8 +1117,8 @@ function generateFlyer() {
   if (qrTarget && window.QRCode) {
     new QRCode(qrTarget, {
       text: smsLink,
-      width: 76,
-      height: 76,
+      width: 62,
+      height: 62,
       colorDark: '#1a1a1a',
       colorLight: '#ffffff',
       correctLevel: QRCode.CorrectLevel.M
