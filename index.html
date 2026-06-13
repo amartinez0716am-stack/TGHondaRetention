@@ -176,6 +176,52 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
 .field-row-2 { grid-template-columns: 1fr 1fr; }
 .field-row-3 { grid-template-columns: 80px 1fr 1fr; }
 
+/* ─── TOGGLE ─── */
+.toggle-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 4px;
+}
+
+.toggle-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mid);
+}
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  background: var(--border);
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.toggle-track::before {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: white;
+  top: 3px; left: 3px;
+  transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+
+.toggle input:checked + .toggle-track { background: var(--honda-blue); }
+.toggle input:checked + .toggle-track::before { transform: translateX(18px); }
+
 /* ─── GENERATE BUTTON ─── */
 .btn-generate {
   width: 100%;
@@ -979,6 +1025,7 @@ function generateFlyer() {
   const spEmail     = val('f-sp-email');
 
   const showCurrentPayment = document.getElementById('f-show-payment')?.checked ?? true;
+  const curLabel  = [curYear, curMake, curModel].filter(Boolean).join(' ') || 'Your current vehicle';
   const newLabel  = [newYear, 'Honda', newModel].filter(Boolean).join(' ') || 'Your next new Honda';
 
   const dealerLogo = logoSrc('dealer') || logoSrc('gillman') || logoSrc(Object.keys(refImages).find(k => k.toLowerCase().includes('gillman') || k.toLowerCase().includes('honda'))) || GILLMAN_LOGO;
