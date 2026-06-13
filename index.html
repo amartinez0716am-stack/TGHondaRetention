@@ -638,9 +638,10 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
   padding: 5px;
 }
 
-.timeline-qr-box img, .timeline-qr-box canvas {
-  width: 100%;
-  height: 100%;
+.timeline-qr-box img, .timeline-qr-box canvas, .timeline-qr-box table {
+  display: block;
+  width: 62px !important;
+  height: 62px !important;
 }
 
 .timeline-qr-label {
@@ -1114,15 +1115,34 @@ function generateFlyer() {
 
   // Generate QR code after DOM update
   const qrTarget = document.getElementById('qr-code');
-  if (qrTarget && window.QRCode) {
-    new QRCode(qrTarget, {
-      text: smsLink,
-      width: 62,
-      height: 62,
-      colorDark: '#1a1a1a',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
-    });
+  if (qrTarget) {
+    qrTarget.innerHTML = '';
+    const renderQR = () => {
+      new QRCode(qrTarget, {
+        text: smsLink,
+        width: 62,
+        height: 62,
+        colorDark: '#1a1a1a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    };
+    if (window.QRCode) {
+      renderQR();
+    } else {
+      // Library may not have finished loading yet; retry shortly
+      let attempts = 0;
+      const tryLoad = setInterval(() => {
+        attempts++;
+        if (window.QRCode) {
+          clearInterval(tryLoad);
+          renderQR();
+        } else if (attempts > 20) {
+          clearInterval(tryLoad);
+          qrTarget.innerHTML = '<div style="font-size:9px;color:#8a8a8d;">QR unavailable</div>';
+        }
+      }, 100);
+    }
   }
 }
 </script>
