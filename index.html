@@ -804,6 +804,13 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
           <label>Est. Monthly Payment</label>
           <input type="text" id="f-cur-payment" placeholder="450">
         </div>
+        <div class="toggle-field">
+          <span class="toggle-label">Show current payment on flyer</span>
+          <label class="toggle">
+            <input type="checkbox" id="f-show-payment" checked>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
       </div>
 
       <!-- NEW VEHICLE -->
@@ -971,7 +978,7 @@ function generateFlyer() {
   const spPhone     = val('f-sp-phone');
   const spEmail     = val('f-sp-email');
 
-  const curLabel  = [curYear, curMake, curModel].filter(Boolean).join(' ') || 'Your current vehicle';
+  const showCurrentPayment = document.getElementById('f-show-payment')?.checked ?? true;
   const newLabel  = [newYear, 'Honda', newModel].filter(Boolean).join(' ') || 'Your next new Honda';
 
   const dealerLogo = logoSrc('dealer') || logoSrc('gillman') || logoSrc(Object.keys(refImages).find(k => k.toLowerCase().includes('gillman') || k.toLowerCase().includes('honda'))) || GILLMAN_LOGO;
@@ -1016,7 +1023,8 @@ function generateFlyer() {
     </div>
 
     <!-- COMPARISON -->
-    <div class="flyer-compare">
+    <div class="flyer-compare" style="${showCurrentPayment ? '' : 'grid-template-columns: 1fr;'}">
+      ${showCurrentPayment ? `
       <div class="compare-col current">
         <div class="compare-label">Your current payment</div>
         <div class="compare-vehicle">${curLabel}</div>
@@ -1027,6 +1035,7 @@ function generateFlyer() {
       <div class="compare-divider">
         <div class="divider-arrow">→</div>
       </div>
+      ` : ''}
 
       <div class="compare-col upgrade">
         <div class="compare-label">With a new Honda</div>
