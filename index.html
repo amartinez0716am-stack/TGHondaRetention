@@ -846,9 +846,18 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
             <input type="text" id="f-cur-model" placeholder="CR-V">
           </div>
         </div>
-        <div class="field">
-          <label>Est. Monthly Payment</label>
-          <input type="text" id="f-cur-payment" placeholder="450">
+        <div class="field-row field-row-2">
+          <div class="field">
+            <label>Display Mode</label>
+            <select id="f-cur-mode" onchange="toggleCurMode()">
+              <option value="payment">Monthly Payment</option>
+              <option value="trade">Trade Value</option>
+            </select>
+          </div>
+          <div class="field">
+            <label id="f-cur-value-label">Est. Monthly Payment</label>
+            <input type="text" id="f-cur-payment" placeholder="450">
+          </div>
         </div>
         <div class="toggle-field">
           <span class="toggle-label">Show current payment on flyer</span>
@@ -1007,6 +1016,19 @@ function formatExpireDate() {
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
+function toggleCurMode() {
+  const mode = document.getElementById('f-cur-mode').value;
+  const label = document.getElementById('f-cur-value-label');
+  const input = document.getElementById('f-cur-payment');
+  if (mode === 'trade') {
+    label.textContent = 'Trade-In Value';
+    input.placeholder = '12,500';
+  } else {
+    label.textContent = 'Est. Monthly Payment';
+    input.placeholder = '450';
+  }
+}
+
 /* ─── GENERATE ─── */
 function generateFlyer() {
   const customer    = val('f-customer') || 'Valued Customer';
@@ -1024,6 +1046,7 @@ function generateFlyer() {
   const spPhone     = val('f-sp-phone');
   const spEmail     = val('f-sp-email');
 
+  const curMode = val('f-cur-mode') || 'payment';
   const showCurrentPayment = document.getElementById('f-show-payment')?.checked ?? true;
   const curLabel  = [curYear, curMake, curModel].filter(Boolean).join(' ') || 'Your current vehicle';
   const newLabel  = [newYear, 'Honda', newModel].filter(Boolean).join(' ') || 'Your next new Honda';
@@ -1073,10 +1096,10 @@ function generateFlyer() {
     <div class="flyer-compare" style="${showCurrentPayment ? '' : 'grid-template-columns: 1fr;'}">
       ${showCurrentPayment ? `
       <div class="compare-col current">
-        <div class="compare-label">Your current payment</div>
+        <div class="compare-label">${curMode === 'trade' ? 'Your trade-in value' : 'Your current payment'}</div>
         <div class="compare-vehicle">${curLabel}</div>
-        <div class="compare-amount"><sup>$</sup>${curPayment.replace('$','')}</div>
-        <div class="compare-amount-sub">estimated per month</div>
+        <div class="compare-amount">${curMode === 'trade' ? `<sup>$</sup>${curPayment.replace('$','').replace('/mo','')}` : `<sup>$</sup>${curPayment.replace('$','')}`}</div>
+        <div class="compare-amount-sub">${curMode === 'trade' ? 'estimated appraisal value' : 'estimated per month'}</div>
       </div>
 
       <div class="compare-divider">
