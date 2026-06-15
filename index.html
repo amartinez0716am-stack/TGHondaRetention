@@ -904,27 +904,21 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
           <label>Est. Monthly Payment</label>
           <input type="text" id="f-new-payment" placeholder="420">
         </div>
+        <div class="toggle-field">
+          <span class="toggle-label">Show new payment on flyer</span>
+          <label class="toggle">
+            <input type="checkbox" id="f-show-new-payment" checked>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
       </div>
 
       <!-- VEHICLE DETAILS -->
       <div class="form-section">
         <div class="section-label">Vehicle Details</div>
-        <div class="field-row field-row-2">
-          <div class="field">
-            <label>Stock #</label>
-            <input type="text" id="f-stock" placeholder="HN12345">
-          </div>
-          <div class="field">
-            <label>Term (months)</label>
-            <input type="text" id="f-term" placeholder="60">
-          </div>
-        </div>
         <div class="field">
-          <label>Finance Type</label>
-          <select id="f-finance">
-            <option value="Finance">Finance</option>
-            <option value="Lease">Lease</option>
-          </select>
+          <label>Customer's VIN</label>
+          <input type="text" id="f-vin" placeholder="1HGBH41JXMN109186">
         </div>
       </div>
 
@@ -1039,15 +1033,14 @@ function generateFlyer() {
   const newYear     = val('f-new-year');
   const newModel    = val('f-new-model');
   const newPayment  = val('f-new-payment') || '—';
-  const stock       = val('f-stock');
-  const term        = val('f-term');
-  const finance     = val('f-finance') || 'Finance';
+  const vin         = val('f-vin');
   const spName      = val('f-sp-name');
   const spPhone     = val('f-sp-phone');
   const spEmail     = val('f-sp-email');
 
   const curMode = val('f-cur-mode') || 'payment';
   const showCurrentPayment = document.getElementById('f-show-payment')?.checked ?? true;
+  const showNewPayment = document.getElementById('f-show-new-payment')?.checked ?? true;
   const curLabel  = [curYear, curMake, curModel].filter(Boolean).join(' ') || 'Your current vehicle';
   const newLabel  = [newYear, 'Honda', newModel].filter(Boolean).join(' ') || 'Your next new Honda';
 
@@ -1055,11 +1048,7 @@ function generateFlyer() {
 
   const expireDate = formatExpireDate();
 
-  const detailItems = [
-    { label: 'Stock #', value: stock || '—' },
-    { label: 'Term', value: term ? term + ' mo.' : '—' },
-    { label: 'Type', value: finance || '—' },
-  ];
+  const detailItems = vin ? [{ label: 'VIN', value: vin }] : [];
 
   const smsBody = encodeURIComponent("Hi! I am ready to come get my NEW HONDA!");
   const smsLink = `sms:8325820113?body=${smsBody}`;
@@ -1088,12 +1077,12 @@ function generateFlyer() {
       </div>
       <div class="built-stock">
         <div class="built-stock-label">Reserved vehicle</div>
-        <div class="built-stock-value">${newLabel}${stock ? ` · #${stock}` : ''}</div>
+        <div class="built-stock-value">${newLabel}</div>
       </div>
     </div>
 
     <!-- COMPARISON -->
-    <div class="flyer-compare" style="${showCurrentPayment ? '' : 'grid-template-columns: 1fr;'}">
+    <div class="flyer-compare" style="${(showCurrentPayment && showNewPayment) ? '' : 'grid-template-columns: 1fr;'}">
       ${showCurrentPayment ? `
       <div class="compare-col current">
         <div class="compare-label">${curMode === 'trade' ? 'Your trade-in value' : 'Your current payment'}</div>
@@ -1101,18 +1090,21 @@ function generateFlyer() {
         <div class="compare-amount">${curMode === 'trade' ? `<sup>$</sup>${curPayment.replace('$','').replace('/mo','')}` : `<sup>$</sup>${curPayment.replace('$','')}`}</div>
         <div class="compare-amount-sub">${curMode === 'trade' ? 'estimated appraisal value' : 'estimated per month'}</div>
       </div>
-
+      ${showNewPayment ? `
       <div class="compare-divider">
         <div class="divider-arrow">→</div>
       </div>
       ` : ''}
+      ` : ''}
 
+      ${showNewPayment ? `
       <div class="compare-col upgrade">
         <div class="compare-label">With a new Honda</div>
         <div class="compare-vehicle">${newLabel}</div>
         <div class="compare-amount"><sup>$</sup>${newPayment.replace('$','')}</div>
         <div class="compare-amount-sub">estimated per month</div>
       </div>
+      ` : ''}
     </div>
 
     <!-- INVENTORY CALLOUT -->
@@ -1121,15 +1113,19 @@ function generateFlyer() {
       <div class="inventory-sub">Your current vehicle has real value right now. Let's put it to work toward a new Honda.</div>
     </div>
 
-    <!-- DETAILS -->
+    <!-- VIN + UPSELL -->
     <div class="flyer-details">
-      <div class="details-grid">
-        ${detailItems.map(d => `
-          <div class="detail-cell">
-            <div class="detail-cell-label">${d.label}</div>
-            <div class="detail-cell-value">${d.value}</div>
-          </div>
-        `).join('')}
+      ${vin ? `
+      <div class="details-grid" style="grid-template-columns: 1fr; margin-bottom: 10px;">
+        <div class="detail-cell">
+          <div class="detail-cell-label">Vehicle Identification Number (VIN)</div>
+          <div class="detail-cell-value" style="font-size:13px; letter-spacing:.04em;">${vin}</div>
+        </div>
+      </div>
+      ` : ''}
+      <div style="padding: 12px 16px; background: var(--honda-blue-soft); border-radius: var(--r-md); border-left: 3px solid var(--honda-blue);">
+        <div style="font-size: 12px; font-weight: 600; color: var(--honda-blue); line-height: 1.4;">Your value could be even higher if you decide to trade today.</div>
+        <div style="font-size: 11px; color: var(--mid); margin-top: 3px; line-height: 1.4;">Trade-in values change with the market. The sooner you act, the more your vehicle works in your favor.</div>
       </div>
     </div>
 
