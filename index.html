@@ -823,9 +823,18 @@ body { background: var(--surface); font-family: var(--font-sans); color: var(--c
       <!-- CUSTOMER -->
       <div class="form-section">
         <div class="section-label">Customer</div>
-        <div class="field">
-          <label>First Name</label>
-          <input type="text" id="f-customer" placeholder="e.g. Maria">
+        <div class="field-row field-row-2">
+          <div class="field">
+            <label>First Name</label>
+            <input type="text" id="f-customer" placeholder="e.g. Maria">
+          </div>
+          <div class="field">
+            <label>Flyer Language</label>
+            <select id="f-lang">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -1003,12 +1012,82 @@ function buildImgTag(src, alt, cls='') {
   return `<img src="${src}" alt="${alt}" class="${cls}" loading="lazy">`;
 }
 
-function formatExpireDate() {
+function formatExpireDate(lang) {
   const d = new Date();
   d.setDate(d.getDate() + 7);
+  if (lang === 'es') {
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    return `${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  }
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
+
+/* ─── TRANSLATIONS ─── */
+const TR = {
+  en: {
+    eyebrow: 'Exclusive Upgrade Opportunity',
+    headline: 'A new Honda for less than you might expect.',
+    builtLabel: 'This offer was built for you',
+    currentlyDriving: 'Currently driving:',
+    reservedVehicle: 'Reserved vehicle',
+    curPaymentLabel: 'Your current payment',
+    curTradeLabel: 'Your trade-in value',
+    perMonth: 'estimated per month',
+    appraisalValue: 'estimated appraisal value',
+    withNewHonda: 'With a new Honda',
+    inventoryHeadline: `We need inventory, <em>and that puts you in the driver's seat of a NEW Honda.</em>`,
+    inventorySub: `Your current vehicle has real value right now. Let's put it to work toward a new Honda.`,
+    vinLabel: 'Vehicle Identification Number (VIN)',
+    upsellTitle: 'Your value could be even higher if you decide to trade today.',
+    upsellSub: 'Trade-in values change with the market. The sooner you act, the more your vehicle works in your favor.',
+    expireLabel: 'This offer is available through',
+    step1: 'Scan or call to schedule',
+    step1sub: 'Pick a time that works for you',
+    step2: 'Come see us',
+    step2sub: `We'll have everything ready`,
+    step3: 'Drive home in your new Honda',
+    step3sub: 'Call (832) 384-4465',
+    qrLabel: 'Scan to schedule your visit',
+    smsBody: 'Hi! I am ready to come get my NEW HONDA!',
+    expireNote: 'This offer expires',
+    finePrint: 'Payment estimates are for informational purposes only and do not constitute a financing offer. Actual payments may vary based on approved credit, down payment, taxes, fees, and final vehicle pricing. All offers subject to change without notice. See dealer for complete details. ©2026 Team Gillman Honda North. 17350 North Fwy, Houston, TX 77090.',
+    defaultCustomer: 'Valued Customer',
+    defaultCurVehicle: 'Your current vehicle',
+    defaultNewVehicle: 'Your next new Honda'
+  },
+  es: {
+    eyebrow: 'Oportunidad Exclusiva de Cambio',
+    headline: 'Un Honda nuevo por menos de lo que imagina.',
+    builtLabel: 'Esta oferta fue creada para usted',
+    currentlyDriving: 'Su vehículo actual:',
+    reservedVehicle: 'Vehículo reservado',
+    curPaymentLabel: 'Su pago actual',
+    curTradeLabel: 'El valor de su trade-in',
+    perMonth: 'estimado por mes',
+    appraisalValue: 'valor estimado de avalúo',
+    withNewHonda: 'Con un Honda nuevo',
+    inventoryHeadline: `Necesitamos inventario, <em>y eso lo pone a usted al volante de un Honda NUEVO.</em>`,
+    inventorySub: `Su vehículo tiene valor real en este momento. Vamos a ponerlo a trabajar hacia un Honda nuevo.`,
+    vinLabel: 'Número de Identificación Vehicular (VIN)',
+    upsellTitle: 'Su valor podría ser aún más alto si decide hacer el cambio hoy.',
+    upsellSub: 'Los valores de trade-in cambian con el mercado. Entre más pronto actúe, más trabaja su vehículo a su favor.',
+    expireLabel: 'Esta oferta está disponible hasta el',
+    step1: 'Escanee o llame para agendar',
+    step1sub: 'Elija la hora que mejor le convenga',
+    step2: 'Visítenos',
+    step2sub: 'Tendremos todo listo para usted',
+    step3: 'Llévese a casa su Honda nuevo',
+    step3sub: 'Llame al (832) 384-4465',
+    qrLabel: 'Escanee para agendar su visita',
+    smsBody: 'Hola! Estoy listo para recoger mi HONDA NUEVO!',
+    expireNote: 'Esta oferta vence el',
+    finePrint: 'Los pagos estimados son solo para fines informativos y no constituyen una oferta de financiamiento. Los pagos reales pueden variar según el crédito aprobado, el enganche, impuestos, cargos y el precio final del vehículo. Todas las ofertas están sujetas a cambios sin previo aviso. Consulte al concesionario para más detalles. ©2026 Team Gillman Honda North. 17350 North Fwy, Houston, TX 77090.',
+    defaultCustomer: 'Estimado Cliente',
+    defaultCurVehicle: 'Su vehículo actual',
+    defaultNewVehicle: 'Su próximo Honda nuevo'
+  }
+};
 
 function toggleCurMode() {
   const mode = document.getElementById('f-cur-mode').value;
@@ -1025,7 +1104,7 @@ function toggleCurMode() {
 
 /* ─── GENERATE ─── */
 function generateFlyer() {
-  const customer    = val('f-customer') || 'Valued Customer';
+  const customerRaw = val('f-customer');
   const curYear     = val('f-cur-year');
   const curMake     = val('f-cur-make');
   const curModel    = val('f-cur-model');
@@ -1038,27 +1117,28 @@ function generateFlyer() {
   const spPhone     = val('f-sp-phone');
   const spEmail     = val('f-sp-email');
 
+  const lang = val('f-lang') || 'en';
+  const t = TR[lang] || TR.en;
+  const customer = customerRaw || t.defaultCustomer;
   const curMode = val('f-cur-mode') || 'payment';
   const showCurrentPayment = document.getElementById('f-show-payment')?.checked ?? true;
   const showNewPayment = document.getElementById('f-show-new-payment')?.checked ?? true;
-  const curLabel  = [curYear, curMake, curModel].filter(Boolean).join(' ') || 'Your current vehicle';
-  const newLabel  = [newYear, 'Honda', newModel].filter(Boolean).join(' ') || 'Your next new Honda';
+  const curLabel  = [curYear, curMake, curModel].filter(Boolean).join(' ') || t.defaultCurVehicle;
+  const newLabel  = [newYear, 'Honda', newModel].filter(Boolean).join(' ') || t.defaultNewVehicle;
 
   const dealerLogo = logoSrc('dealer') || logoSrc('gillman') || logoSrc(Object.keys(refImages).find(k => k.toLowerCase().includes('gillman') || k.toLowerCase().includes('honda'))) || GILLMAN_LOGO;
 
-  const expireDate = formatExpireDate();
+  const expireDate = formatExpireDate(lang);
 
-  const detailItems = vin ? [{ label: 'VIN', value: vin }] : [];
-
-  const smsBody = encodeURIComponent("Hi! I am ready to come get my NEW HONDA!");
+  const smsBody = encodeURIComponent(t.smsBody);
   const smsLink = `sms:8325820113?body=${smsBody}`;
 
   const html = `
     <!-- HERO -->
     <div class="flyer-hero">
       <div>
-        <div class="hero-eyebrow">Exclusive Upgrade Opportunity</div>
-        <div class="hero-headline">A new Honda for less than you might expect.</div>
+        <div class="hero-eyebrow">${t.eyebrow}</div>
+        <div class="hero-headline">${t.headline}</div>
       </div>
       <div class="hero-right">
         ${dealerLogo
@@ -1071,12 +1151,12 @@ function generateFlyer() {
     <!-- BUILT FOR YOU -->
     <div class="flyer-built">
       <div>
-        <div class="built-label">This offer was built for you</div>
+        <div class="built-label">${t.builtLabel}</div>
         <div class="built-name">${customer}</div>
-        <div class="built-meta">Currently driving: ${curLabel}</div>
+        <div class="built-meta">${t.currentlyDriving} ${curLabel}</div>
       </div>
       <div class="built-stock">
-        <div class="built-stock-label">Reserved vehicle</div>
+        <div class="built-stock-label">${t.reservedVehicle}</div>
         <div class="built-stock-value">${newLabel}</div>
       </div>
     </div>
@@ -1085,10 +1165,10 @@ function generateFlyer() {
     <div class="flyer-compare" style="${(showCurrentPayment && showNewPayment) ? '' : 'grid-template-columns: 1fr;'}">
       ${showCurrentPayment ? `
       <div class="compare-col current">
-        <div class="compare-label">${curMode === 'trade' ? 'Your trade-in value' : 'Your current payment'}</div>
+        <div class="compare-label">${curMode === 'trade' ? t.curTradeLabel : t.curPaymentLabel}</div>
         <div class="compare-vehicle">${curLabel}</div>
         <div class="compare-amount">${curMode === 'trade' ? `<sup>$</sup>${curPayment.replace('$','').replace('/mo','')}` : `<sup>$</sup>${curPayment.replace('$','')}`}</div>
-        <div class="compare-amount-sub">${curMode === 'trade' ? 'estimated appraisal value' : 'estimated per month'}</div>
+        <div class="compare-amount-sub">${curMode === 'trade' ? t.appraisalValue : t.perMonth}</div>
       </div>
       ${showNewPayment ? `
       <div class="compare-divider">
@@ -1099,18 +1179,18 @@ function generateFlyer() {
 
       ${showNewPayment ? `
       <div class="compare-col upgrade">
-        <div class="compare-label">With a new Honda</div>
+        <div class="compare-label">${t.withNewHonda}</div>
         <div class="compare-vehicle">${newLabel}</div>
         <div class="compare-amount"><sup>$</sup>${newPayment.replace('$','')}</div>
-        <div class="compare-amount-sub">estimated per month</div>
+        <div class="compare-amount-sub">${t.perMonth}</div>
       </div>
       ` : ''}
     </div>
 
     <!-- INVENTORY CALLOUT -->
     <div class="flyer-inventory">
-      <div class="inventory-headline">We need inventory, <em>and that puts you in the driver's seat of a NEW Honda.</em></div>
-      <div class="inventory-sub">Your current vehicle has real value right now. Let's put it to work toward a new Honda.</div>
+      <div class="inventory-headline">${t.inventoryHeadline}</div>
+      <div class="inventory-sub">${t.inventorySub}</div>
     </div>
 
     <!-- VIN + UPSELL -->
@@ -1118,20 +1198,20 @@ function generateFlyer() {
       ${vin ? `
       <div class="details-grid" style="grid-template-columns: 1fr; margin-bottom: 10px;">
         <div class="detail-cell">
-          <div class="detail-cell-label">Vehicle Identification Number (VIN)</div>
+          <div class="detail-cell-label">${t.vinLabel}</div>
           <div class="detail-cell-value" style="font-size:13px; letter-spacing:.04em;">${vin}</div>
         </div>
       </div>
       ` : ''}
       <div style="padding: 12px 16px; background: var(--honda-blue-soft); border-radius: var(--r-md); border-left: 3px solid var(--honda-blue);">
-        <div style="font-size: 12px; font-weight: 600; color: var(--honda-blue); line-height: 1.4;">Your value could be even higher if you decide to trade today.</div>
-        <div style="font-size: 11px; color: var(--mid); margin-top: 3px; line-height: 1.4;">Trade-in values change with the market. The sooner you act, the more your vehicle works in your favor.</div>
+        <div style="font-size: 12px; font-weight: 600; color: var(--honda-blue); line-height: 1.4;">${t.upsellTitle}</div>
+        <div style="font-size: 11px; color: var(--mid); margin-top: 3px; line-height: 1.4;">${t.upsellSub}</div>
       </div>
     </div>
 
     <!-- EXPIRATION -->
     <div class="flyer-expire">
-      <div class="expire-label">This offer is available through</div>
+      <div class="expire-label">${t.expireLabel}</div>
       <div class="expire-date">${expireDate}</div>
     </div>
 
@@ -1139,30 +1219,30 @@ function generateFlyer() {
     <div class="flyer-timeline">
       <div class="timeline-step">
         <div class="timeline-num">1</div>
-        <div class="timeline-text">Scan or call to schedule</div>
-        <div class="timeline-sub">Pick a time that works for you</div>
+        <div class="timeline-text">${t.step1}</div>
+        <div class="timeline-sub">${t.step1sub}</div>
       </div>
       <div class="timeline-step">
         <div class="timeline-num">2</div>
-        <div class="timeline-text">Come see us</div>
-        <div class="timeline-sub">We'll have everything ready</div>
+        <div class="timeline-text">${t.step2}</div>
+        <div class="timeline-sub">${t.step2sub}</div>
       </div>
       <div class="timeline-step">
         <div class="timeline-num">3</div>
-        <div class="timeline-text">Drive home in your new Honda</div>
-        <div class="timeline-sub">Call ${'(832) 384-4465'}</div>
+        <div class="timeline-text">${t.step3}</div>
+        <div class="timeline-sub">${t.step3sub}</div>
       </div>
       <div class="timeline-qr">
         <div class="timeline-qr-box" id="qr-code"></div>
-        <div class="timeline-qr-label">Scan to schedule your visit</div>
+        <div class="timeline-qr-label">${t.qrLabel}</div>
       </div>
     </div>
 
     <!-- FINE PRINT -->
     <div class="flyer-fine">
       <div class="fine-print">
-        <span class="expire-note">This offer expires ${expireDate}.</span>
-        Payment estimates are for informational purposes only and do not constitute a financing offer. Actual payments may vary based on approved credit, down payment, taxes, fees, and final vehicle pricing. All offers subject to change without notice. See dealer for complete details. ©2026 Team Gillman Honda North. 17350 North Fwy, Houston, TX 77090.
+        <span class="expire-note">${t.expireNote} ${expireDate}.</span>
+        ${t.finePrint}
       </div>
     </div>
 
